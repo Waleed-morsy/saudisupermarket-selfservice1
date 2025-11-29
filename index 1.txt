@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>مرحبا بك في خدمة الاستفسارات الخاصة بسعودي سوبر ماركت</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            padding: 40px;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 25px;
+            margin: auto;
+            width: 450px;
+            box-shadow: 0 0 10px #ccc;
+            border-radius: 10px;
+        }
+        input {
+            width: 92%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #999;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        button {
+            width: 95%;
+            padding: 12px;
+            background: green;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #006600;
+        }
+        .result {
+            margin-top: 20px;
+            text-align: right;
+        }
+        .item {
+            background: #e8f5e9;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>مرحبا بك في خدمة الاستفسارات الخاصة بسعودي سوبر ماركت</h2>
+
+        <input type="text" id="empCode" placeholder="أدخل الكود الوظيفي">
+        <input type="text" id="nid" placeholder="أدخل الرقم القومي">
+
+        <button onclick="search()">عرض البيانات</button>
+
+        <div id="result" class="result"></div>
+    </div>
+
+<script>
+function search() {
+    const code = document.getElementById("empCode").value.trim();
+    const nid = document.getElementById("nid").value.trim();
+    const resultDiv = document.getElementById("result");
+
+    resultDiv.innerHTML = "⏳ جاري البحث...";
+
+    fetch("YOUR_FLOW_URL_HERE", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ EmpCode: code, NationalID: nid })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (!data || data.status === "not_found") {
+            resultDiv.innerHTML = "<div class='item'>❌ الموظف غير موجود</div>";
+            return;
+        }
+
+        resultDiv.innerHTML = `
+            <div class='item'><strong>الاسم:</strong> ${data.name}</div>
+            <div class='item'><strong>الشهر:</strong> ${data.month}</div>
+            <div class='item'><strong>إجمالي التأخيرات:</strong> ${data.late}</div>
+            <div class='item'><strong>السنوي المتبقي:</strong> ${data.annual}</div>
+            <div class='item'><strong>إجمالي الخصم الشهري:</strong> ${data.deduct}</div>
+            <div class='item'><strong>أيام الغياب:</strong> ${data.absent}</div>
+        `;
+    })
+    .catch(() => {
+        resultDiv.innerHTML = "<div class='item'>⚠️ خطأ في الاتصال بالخدمة</div>";
+    });
+}
+</script>
+
+</body>
+</html>
